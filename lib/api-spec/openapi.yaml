@@ -13,6 +13,8 @@ tags:
     description: Stripe checkout operations
   - name: users
     description: User management
+  - name: admin
+    description: Admin operations (password protected)
 paths:
   /healthz:
     get:
@@ -86,6 +88,33 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
 
+  /admin/users:
+    get:
+      operationId: listAdminUsers
+      tags: [admin]
+      summary: List all provisioned users
+      description: Returns all Vilo users. Requires Authorization header with admin password.
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          schema:
+            type: string
+          description: "Bearer <ADMIN_PASSWORD>"
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUsersResult"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -133,6 +162,43 @@ components:
           enum: [pending, active, failed]
         createdAt:
           type: string
+
+    AdminViloUser:
+      type: object
+      required: [id, name, email, status, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        viloNumber:
+          type: ["string", "null"]
+        twilioSid:
+          type: ["string", "null"]
+        elevenLabsPhoneId:
+          type: ["string", "null"]
+        stripeSessionId:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, active, failed]
+        createdAt:
+          type: string
+
+    AdminUsersResult:
+      type: object
+      required: [users, total]
+      properties:
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminViloUser"
+        total:
+          type: integer
 
     ErrorResponse:
       type: object

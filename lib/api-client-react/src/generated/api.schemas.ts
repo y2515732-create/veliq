@@ -41,6 +41,38 @@ export interface ViloUser {
   createdAt: string;
 }
 
+export type AdminViloUserStatus = typeof AdminViloUserStatus[keyof typeof AdminViloUserStatus];
+
+
+export const AdminViloUserStatus = {
+  pending: 'pending',
+  active: 'active',
+  failed: 'failed',
+} as const;
+
+export interface AdminViloUser {
+  id: number;
+  name: string;
+  email: string;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  viloNumber?: string | null;
+  /** @nullable */
+  twilioSid?: string | null;
+  /** @nullable */
+  elevenLabsPhoneId?: string | null;
+  /** @nullable */
+  stripeSessionId?: string | null;
+  status: AdminViloUserStatus;
+  createdAt: string;
+}
+
+export interface AdminUsersResult {
+  users: AdminViloUser[];
+  total: number;
+}
+
 export interface ErrorResponse {
   error: string;
 }

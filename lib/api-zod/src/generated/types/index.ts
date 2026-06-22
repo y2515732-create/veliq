@@ -6,6 +6,9 @@
  * OpenAPI spec version: 0.1.0
  */
 
+export * from './adminUsersResult';
+export * from './adminViloUser';
+export * from './adminViloUserStatus';
 export * from './checkoutInput';
 export * from './checkoutResult';
 export * from './errorResponse';

@@ -51,3 +51,28 @@ export const GetUserResponse = zod.object({
 })
 
 
+/**
+ * Returns all Vilo users. Requires Authorization header with admin password.
+ * @summary List all provisioned users
+ */
+export const ListAdminUsersHeader = zod.object({
+  "Authorization": zod.string().describe('Bearer <ADMIN_PASSWORD>')
+})
+
+export const ListAdminUsersResponse = zod.object({
+  "users": zod.array(zod.object({
+  "id": zod.number(),
+  "name": zod.string(),
+  "email": zod.string(),
+  "phone": zod.string().nullish(),
+  "viloNumber": zod.string().nullish(),
+  "twilioSid": zod.string().nullish(),
+  "elevenLabsPhoneId": zod.string().nullish(),
+  "stripeSessionId": zod.string().nullish(),
+  "status": zod.enum(['pending', 'active', 'failed']),
+  "createdAt": zod.string()
+})),
+  "total": zod.number()
+})
+
+
