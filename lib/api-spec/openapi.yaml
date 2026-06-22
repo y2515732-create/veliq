@@ -1,15 +1,18 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Vilo AI API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: checkout
+    description: Stripe checkout operations
+  - name: users
+    description: User management
 paths:
   /healthz:
     get:
@@ -24,6 +27,65 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /checkout:
+    post:
+      operationId: createCheckout
+      tags: [checkout]
+      summary: Create Stripe checkout session
+      description: Creates a Stripe checkout session for Vilo AI subscription ($4.99)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckoutInput"
+      responses:
+        "200":
+          description: Checkout session created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutResult"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /users/{email}:
+    get:
+      operationId: getUser
+      tags: [users]
+      summary: Get user by email
+      description: Returns user provisioning status and assigned Vilo number
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ViloUser"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +96,47 @@ components:
       required:
         - status
 
+    CheckoutInput:
+      type: object
+      required: [userName, userEmail]
+      properties:
+        userName:
+          type: string
+        userEmail:
+          type: string
+        userPhone:
+          type: ["string", "null"]
+
+    CheckoutResult:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+
+    ViloUser:
+      type: object
+      required: [id, name, email, status, createdAt]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        viloNumber:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, active, failed]
+        createdAt:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
