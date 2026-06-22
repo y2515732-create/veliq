@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import Success from "@/pages/success";
 import Cancel from "@/pages/cancel";
 import AdminPage from "@/pages/admin";
+import InstallPrompt from "@/components/install-prompt";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ function App() {
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
           <Router />
         </WouterRouter>
+        <InstallPrompt />
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
