@@ -41,7 +41,7 @@ router.post("/checkout", checkoutLimiter, async (req, res) => {
           price_data: {
             currency: "usd",
             product_data: { name: "Vilo AI - Personal Voice Agent" },
-            unit_amount: 499,
+            unit_amount: 398,
           },
           quantity: 1,
         },

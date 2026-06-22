@@ -18,7 +18,7 @@ export const HealthCheckResponse = zod.object({
 
 
 /**
- * Creates a Stripe checkout session for Vilo AI subscription ($4.99)
+ * Creates a Stripe checkout session for Vilo AI subscription ($3.98)
  * @summary Create Stripe checkout session
  */
 export const CreateCheckoutBody = zod.object({

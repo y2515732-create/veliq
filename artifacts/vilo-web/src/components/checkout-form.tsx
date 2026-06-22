@@ -127,7 +127,7 @@ export function CheckoutForm() {
           ) : (
             <ArrowRight className="mr-2 h-6 w-6" />
           )}
-          Get Your AI Number — $4.99
+          Get Your AI Number — $3.98
         </Button>
         <p className="text-center text-sm text-muted-foreground font-mono mt-4 uppercase tracking-widest">
           One-time payment. No subscriptions.

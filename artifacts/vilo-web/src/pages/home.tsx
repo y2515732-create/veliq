@@ -52,7 +52,7 @@ export default function Home() {
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 font-medium leading-relaxed">
-            Stop giving out your real number. For $4.99, get a dedicated phone line wired directly to a customizable ElevenLabs AI agent. It answers calls, takes messages, and filters the noise.
+            Stop giving out your real number. For $3.98, get a dedicated phone line wired directly to a customizable ElevenLabs AI agent. It answers calls, takes messages, and filters the noise.
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -109,7 +109,7 @@ export default function Home() {
             {[
               {
                 step: "01",
-                title: "Pay $4.99",
+                title: "Pay $3.98",
                 desc: "One single payment. No recurring subscriptions, no hidden bullshit. You pay once, you own the number.",
                 icon: Zap
               },
@@ -197,7 +197,7 @@ export default function Home() {
             Get It Now
           </h2>
           <p className="text-2xl text-muted-foreground mb-16 max-w-2xl mx-auto">
-            $4.99 one-time. No subscriptions. Instantly provisioned.
+            $3.98 one-time. No subscriptions. Instantly provisioned.
           </p>
           
           <CheckoutForm />

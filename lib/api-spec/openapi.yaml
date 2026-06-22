@@ -35,7 +35,7 @@ paths:
       operationId: createCheckout
       tags: [checkout]
       summary: Create Stripe checkout session
-      description: Creates a Stripe checkout session for Vilo AI subscription ($4.99)
+      description: Creates a Stripe checkout session for Vilo AI subscription ($3.98)
       requestBody:
         required: true
         content:
