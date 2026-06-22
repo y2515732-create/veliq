@@ -6,6 +6,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import Success from "@/pages/success";
 import Cancel from "@/pages/cancel";
+import AdminPage from "@/pages/admin";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/success" component={Success} />
       <Route path="/cancel" component={Cancel} />
+      <Route path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>
   );
