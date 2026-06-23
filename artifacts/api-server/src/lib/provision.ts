@@ -1,5 +1,4 @@
 import twilio from "twilio";
-import axios from "axios";
 import { db, usersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
 
@@ -19,72 +18,25 @@ export async function provisionViloNumber(
     process.env.TWILIO_AUTH_TOKEN,
   );
 
-  // 1. Buy a Twilio number
-  const available = await twilioClient.availablePhoneNumbers("US").local.list({ limit: 3 });
-  if (!available.length) throw new Error("No US local numbers available");
-
-  const purchased = await twilioClient.incomingPhoneNumbers.create({
-    phoneNumber: available[0].phoneNumber,
-  });
-  const viloNumber = purchased.phoneNumber;
-
-  log.info({ viloNumber }, "Bought Twilio number");
-
-  // 2. Import the number into ElevenLabs Conversational AI
-  const elevenHeaders = {
-    "xi-api-key": process.env.ELEVENLABS_API_KEY ?? "",
-    "Content-Type": "application/json",
-  };
-
-  const importRes = await axios.post<{ phone_number_id: string }>(
-    "https://api.elevenlabs.io/v1/convai/phone-numbers",
-    {
-      provider: "twilio",
-      phone_number: viloNumber,
-      label: `Vilo-${userName}`,
-      sid: process.env.TWILIO_ACCOUNT_SID,
-      token: process.env.TWILIO_AUTH_TOKEN,
-    },
-    { headers: elevenHeaders },
-  );
-
-  const phoneNumberId = importRes.data?.phone_number_id;
-  if (!phoneNumberId) throw new Error("ElevenLabs did not return a phone_number_id");
-
-  log.info({ phoneNumberId }, "Imported number into ElevenLabs");
-
-  // 3. Assign the agent to the phone number
-  const agentId = process.env.ELEVENLABS_AGENT_ID;
-  if (agentId) {
-    await axios.patch(
-      `https://api.elevenlabs.io/v1/convai/phone-numbers/${phoneNumberId}`,
-      { agent_id: agentId },
-      { headers: elevenHeaders },
-    );
-    log.info({ phoneNumberId, agentId }, "Agent assigned to phone number");
-  } else {
-    log.error({}, "ELEVENLABS_AGENT_ID not set — number imported but no agent assigned");
-  }
-
-  // 4. Persist and mark active
+  // 1. Mark user as active in DB
   await db
     .update(usersTable)
-    .set({
-      viloNumber,
-      twilioSid: purchased.sid,
-      elevenLabsPhoneId: phoneNumberId,
-      status: "active",
-    })
+    .set({ status: "active" })
     .where(eq(usersTable.email, userEmail));
 
-  // 5. Send welcome SMS
+  log.info({ userEmail }, "User marked active");
+
+  // 2. Make outbound call to user via Twilio
   if (userPhone && process.env.TWILIO_MAIN_NUMBER) {
-    await twilioClient.messages.create({
-      body: `Welcome to Vilo AI, ${userName}! Your personal number ${viloNumber} is now LIVE. Call it anytime.`,
-      from: process.env.TWILIO_MAIN_NUMBER,
+    const call = await twilioClient.calls.create({
       to: userPhone,
+      from: process.env.TWILIO_MAIN_NUMBER,
+      url: `${process.env.VILO_AGENT_URL}/incoming-call`,
     });
+    log.info({ callSid: call.sid, userPhone }, "Outbound call initiated");
+  } else {
+    log.error({}, "No phone number or Twilio number configured");
   }
 
-  log.info({ userEmail, viloNumber }, "Vilo AI fully provisioned");
+  log.info({ userEmail }, "Vilo outbound call completed");
 }
