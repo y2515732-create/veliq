@@ -63,17 +63,13 @@ router.post("/", async (req, res) => {
 
     req.log.info({ userEmail, userName, sessionId }, "New paying customer — provisioning");
 
-    const inserted = await db
+    await db
       .insert(usersTable)
       .values({ name: userName, email: userEmail, phone: userPhone || null, stripeSessionId: sessionId, status: "pending" })
-      .onConflictDoNothing()
-      .returning({ id: usersTable.id });
-
-    if (!inserted.length) {
-      req.log.info({ sessionId }, "Concurrent duplicate insert detected — skipping");
-      res.status(200).send("OK");
-      return;
-    }
+      .onConflictDoUpdate({
+        target: usersTable.email,
+        set: { name: userName, phone: userPhone || null, stripeSessionId: sessionId, status: "pending" },
+      });
 
     const log = req.log as SimpleLog;
     provisionViloNumber(log, userEmail, userName, userPhone).catch(
