@@ -19,7 +19,7 @@ export default function Home() {
         body: JSON.stringify({ userName: name, userEmail: email, userPhone: phone }),
       });
       const data = await res.json();
-      if (data.url) {
+      if (data.url) { sessionStorage.setItem("vilo_session_id", data.sessionId);
         window.location.href = data.url;
       } else {
         setError("Error: " + JSON.stringify(data));
