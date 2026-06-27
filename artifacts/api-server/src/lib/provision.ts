@@ -34,6 +34,7 @@ export async function provisionViloNumber(
       }),
     });
     const data = await response.json();
+    log.info({ telnyxResponse: data, status: response.status }, "Telnyx API response");
     log.info({ callId: data?.data?.call_leg_id, userPhone }, "Outbound call initiated");
   } else {
     log.error({}, "No phone number or Telnyx number configured");
