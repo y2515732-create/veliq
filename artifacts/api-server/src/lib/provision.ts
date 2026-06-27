@@ -28,7 +28,7 @@ export async function provisionViloNumber(
       },
       body: JSON.stringify({
         connection_id: process.env.TELNYX_APP_ID,
-        to: userPhone,
+        to: userPhone.startsWith('+') ? userPhone : `+1${userPhone}`,
         from: process.env.TELNYX_PHONE_NUMBER,
         webhook_url: `${process.env.VILO_AGENT_URL}/incoming-call`,
       }),
